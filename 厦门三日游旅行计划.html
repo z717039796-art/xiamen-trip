@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>厦门三日游 · 旅行手帐</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --paper:#f5efe0; --ink:#3d3225; --muted:#8a7a5e;
+    --blue:#3b82f6; --orange:#d97742; --green:#6a9a6b; --red:#c25b4e;
+  }
+  body {
+    font-family:'Noto Sans SC',sans-serif; color:var(--ink); line-height:1.8; font-size:17px;
+    background-color:var(--paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
+      radial-gradient(circle at 15% 20%, rgba(217,119,66,.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 60%, rgba(91,141,184,.06) 0%, transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(106,154,107,.05) 0%, transparent 40%);
+  }
+
+  /* Hero */
+  .hero { text-align:center; padding:50px 20px 30px; position:relative; }
+  .hero .tape {
+    width:160px; height:26px; background:rgba(91,141,184,.3);
+    position:absolute; top:16px; left:50%; transform:translateX(-50%) rotate(-3deg);
+  }
+  .hero h1 { font-family:'Ma Shan Zheng',cursive; font-size:clamp(38px,6.5vw,64px); margin-top:18px; }
+  .hero .from-to { font-family:'Zhi Mang Xing',cursive; font-size:clamp(18px,2.5vw,24px); color:var(--orange); margin-top:6px; }
+  .hero .sub { margin-top:14px; color:var(--muted); font-size:14px; }
+  .hero .tags { margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .hero .tags span {
+    background:#fff; padding:5px 14px; border-radius:3px; font-size:13px;
+    box-shadow:1px 2px 0 rgba(0,0,0,.08); border:1px solid #e5dcc4;
+  }
+  .hero .tags span:nth-child(odd) { transform:rotate(-1.5deg); }
+  .hero .tags span:nth-child(even) { transform:rotate(1.5deg); }
+
+  /* Nav */
+  .nav {
+    position:sticky; top:0; z-index:1000;
+    background:rgba(245,239,224,.96); backdrop-filter:blur(8px);
+    border-top:2px dashed #d4c8a8; border-bottom:2px dashed #d4c8a8;
+    display:flex; justify-content:center; gap:6px; padding:10px; flex-wrap:wrap;
+  }
+  .nav button {
+    background:#fff; border:2px solid var(--ink); padding:9px 22px;
+    font-family:'Ma Shan Zheng',cursive; font-size:19px; cursor:pointer;
+    box-shadow:3px 3px 0 var(--ink); transition:all .15s; color:var(--ink);
+  }
+  .nav button:hover { transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
+  .nav button:active { transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+  .nav button.active { background:var(--orange); color:#fff; }
+
+  .wrap { max-width:900px; margin:0 auto; padding:0 20px; }
+  .view { display:none; padding:36px 0; animation:fade .3s; }
+  .view.active { display:block; }
+  @keyframes fade { from{opacity:0; transform:translateY(10px);} to{opacity:1;} }
+
+  .v-title {
+    font-family:'Ma Shan Zheng',cursive; font-size:44px; margin-bottom:4px;
+    display:inline-block; position:relative;
+  }
+  .v-title::after {
+    content:''; position:absolute; bottom:2px; left:0; right:0; height:8px;
+    background:rgba(217,119,66,.22); z-index:-1;
+  }
+  .v-desc { color:var(--muted); font-size:16px; margin-bottom:20px; }
+
+  /* Polaroid */
+  .polaroid {
+    background:#fff; padding:12px 12px 36px; box-shadow:2px 4px 12px rgba(0,0,0,.12);
+    margin:16px 0 24px; position:relative;
+  }
+  .polaroid::before {
+    content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-2deg);
+    width:110px; height:22px; background:rgba(91,141,184,.3);
+  }
+  .polaroid img { width:100%; display:block; }
+  .polaroid .cap { text-align:center; font-family:'Zhi Mang Xing',cursive; font-size:22px; color:var(--muted); margin-top:8px; }
+
+  /* Day cards */
+  .day-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:16px 0; }
+  .dc {
+    background:#fffef8; padding:18px 16px; cursor:pointer; position:relative;
+    box-shadow:2px 3px 0 rgba(0,0,0,.1); border:1px solid #e5dcc4; transition:transform .2s;
+  }
+  .dc:nth-child(1) { transform:rotate(-1.5deg); }
+  .dc:nth-child(2) { transform:rotate(1deg); }
+  .dc:nth-child(3) { transform:rotate(-0.5deg); }
+  .dc:hover { transform:rotate(0) translateY(-4px); }
+  .dc .stamp {
+    position:absolute; top:10px; right:10px; width:42px; height:42px;
+    border:2px solid var(--red); border-radius:50%; color:var(--red);
+    font-family:'Ma Shan Zheng',cursive; font-size:13px;
+    display:flex; align-items:center; justify-content:center; transform:rotate(12deg);
+  }
+  .dc h3 { font-family:'Ma Shan Zheng',cursive; font-size:22px; margin-bottom:6px; padding-right:46px; }
+  .dc p { font-size:14.5px; color:var(--muted); }
+  .dc .go { margin-top:10px; font-size:14.5px; color:var(--orange); font-weight:600; }
+
+  /* Timeline */
+  .timeline { position:relative; padding-left:32px; }
+  .timeline::before {
+    content:''; position:absolute; left:8px; top:10px; bottom:10px; width:3px;
+    background:repeating-linear-gradient(var(--orange), var(--orange) 6px, transparent 6px, transparent 12px);
+  }
+
+  /* Spot */
+  .spot {
+    background:#fffef8; margin-bottom:14px; cursor:pointer;
+    box-shadow:2px 3px 0 rgba(0,0,0,.08); border:1px solid #e5dcc4;
+    position:relative; transition:transform .15s;
+  }
+  .spot:nth-child(odd) { transform:rotate(-.5deg); }
+  .spot:nth-child(even) { transform:rotate(.5deg); }
+  .spot:hover { transform:rotate(0); }
+  .spot::before {
+    content:''; position:absolute; top:-7px; left:18px; width:56px; height:14px;
+    background:rgba(106,154,107,.3);
+  }
+  .spot.hl::before { background:rgba(194,91,78,.35); }
+  .spot-head { display:flex; align-items:center; padding:15px 18px; gap:10px; }
+  .spot-time { font-family:'Zhi Mang Xing',cursive; font-size:22px; color:var(--orange); width:72px; flex-shrink:0; }
+  .spot-name { flex:1; font-weight:600; font-size:17.5px; }
+  .spot.hl .spot-name::after {
+    content:'必去'; font-size:12px; background:var(--red); color:#fff;
+    padding:2px 8px; border-radius:3px; margin-left:8px;
+  }
+  .spot-arrow { color:#b0a080; transition:transform .2s; font-size:15px; }
+  .spot.open .spot-arrow { transform:rotate(180deg); }
+  .spot-body { max-height:0; overflow:hidden; transition:max-height .35s; }
+  .spot.open .spot-body { max-height:800px; }
+  .spot-inner { padding:14px 18px; border-top:1px dashed #d4c8a8; font-size:15.5px; }
+  .spot-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 16px; margin-bottom:10px; font-size:15.5px; }
+  .spot-grid b { color:var(--blue); }
+  .note-box { font-size:15px; padding:10px 14px; border-radius:3px; margin-top:6px; }
+  .note-tip { background:#fff3d6; border-left:3px solid var(--orange); color:#7a5a20; }
+  .note-food { background:#e0eef5; border-left:3px solid var(--blue); color:#2a5a78; }
+
+  /* Checklist */
+  .checklist {
+    background:#fffef8; padding:20px; box-shadow:2px 3px 0 rgba(0,0,0,.08);
+    border:1px solid #e5dcc4; margin:16px 0;
+  }
+  .checklist h3 { font-family:'Ma Shan Zheng',cursive; font-size:24px; margin-bottom:12px; }
+  .ci { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed #d4c8a8; cursor:pointer; font-size:15.5px; }
+  .ci:last-child { border:none; }
+  .ci input { width:17px; height:17px; accent-color:var(--red); }
+  .ci.done span { text-decoration:line-through; color:#b0a080; }
+
+  .budget { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:14px 0; }
+  .b {
+    background:#fff; padding:16px 8px; text-align:center;
+    box-shadow:2px 3px 0 rgba(0,0,0,.08); border:1px solid #e5dcc4;
+  }
+  .b .num { font-family:'Ma Shan Zheng',cursive; font-size:26px; color:var(--orange); }
+  .b .lbl { font-size:12.5px; color:var(--muted); margin-top:4px; }
+
+  #toTop {
+    position:fixed; right:22px; bottom:22px; width:46px; height:46px;
+    background:var(--ink); color:#fff; border:none; cursor:pointer;
+    font-size:18px; box-shadow:3px 3px 0 var(--orange); display:none;
+    font-family:'Ma Shan Zheng',cursive;
+  }
+
+  /* 记账本 */
+  .bk-form {
+    background:#fffef8; padding:20px; box-shadow:2px 3px 0 rgba(0,0,0,.1);
+    border:1px solid #e5dcc4; margin-bottom:16px;
+  }
+  .bk-form h3 { font-family:'Ma Shan Zheng',cursive; font-size:22px; margin-bottom:14px; }
+  .bk-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px; }
+  .bk-row input, .bk-row select {
+    padding:9px 12px; border:2px solid #d4c8a8; border-radius:6px;
+    font-size:14px; font-family:inherit; background:#fff;
+  }
+  .bk-row input:focus, .bk-row select:focus { outline:none; border-color:var(--orange); }
+  .bk-full { grid-column:1/-1; }
+  .bk-add-btn {
+    background:var(--orange); color:#fff; border:none; padding:11px;
+    font-size:15px; font-family:'Ma Shan Zheng',cursive; border-radius:6px;
+    cursor:pointer; width:100%; font-size:18px;
+  }
+  .bk-add-btn:hover { background:#c2663a; }
+  .bk-summary {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px;
+  }
+  .bk-sum-card {
+    background:#fff; padding:14px; text-align:center;
+    box-shadow:2px 3px 0 rgba(0,0,0,.08); border:1px solid #e5dcc4;
+  }
+  .bk-sum-card .n { font-family:'Ma Shan Zheng',cursive; font-size:24px; color:var(--orange); }
+  .bk-sum-card .l { font-size:12px; color:var(--muted); }
+  .bk-list { background:#fffef8; border:1px solid #e5dcc4; box-shadow:2px 3px 0 rgba(0,0,0,.08); }
+  .bk-item {
+    display:flex; align-items:center; padding:12px 16px; border-bottom:1px dashed #d4c8a8; gap:10px;
+  }
+  .bk-item:last-child { border:none; }
+  .bk-cat {
+    flex-shrink:0; padding:3px 10px; border-radius:4px; font-size:12px; color:#fff; width:60px; text-align:center;
+  }
+  .bk-desc { flex:1; font-size:14px; }
+  .bk-payer { font-size:12px; color:var(--muted); }
+  .bk-amt { font-weight:700; color:var(--red); min-width:70px; text-align:right; }
+  .bk-del {
+    background:none; border:none; color:#b0a080; cursor:pointer; font-size:16px; padding:4px;
+  }
+  .bk-del:hover { color:var(--red); }
+  .bk-settle {
+    background:#ecfeff; border:1px solid #a5e3d5; padding:16px; margin-top:16px; border-radius:6px;
+  }
+  .bk-settle h4 { font-family:'Ma Shan Zheng',cursive; font-size:18px; margin-bottom:10px; color:#0e7490; }
+  .bk-settle p { font-size:14px; margin-bottom:4px; }
+  .empty-tip { text-align:center; color:#b0a080; padding:30px; font-size:14px; }
+
+  footer {
+    text-align:center; padding:36px 20px; color:var(--muted);
+    border-top:2px dashed #d4c8a8; margin-top:36px;
+    font-family:'Zhi Mang Xing',cursive; font-size:18px;
+  }
+
+  /* 漂浮装饰贴纸 */
+  .deco {
+    position:fixed; pointer-events:none; opacity:.5; z-index:0;
+  }
+  .deco svg { width:100%; height:100%; }
+  .deco1 { top:120px; left:20px; width:70px; transform:rotate(-15deg); }
+  .deco2 { top:300px; right:25px; width:60px; transform:rotate(10deg); }
+  .deco3 { bottom:150px; left:30px; width:65px; transform:rotate(8deg); }
+  .deco4 { bottom:80px; right:30px; width:75px; transform:rotate(-8deg); }
+  .deco5 { top:55%; left:15px; width:50px; transform:rotate(-20deg); }
+  .deco6 { top:40%; right:15px; width:55px; transform:rotate(15deg); }
+  @media (max-width:900px) { .deco { display:none; } }
+
+  /* hero 装饰 */
+  .hero-plane {
+    position:absolute; top:60px; right:10%; font-size:28px; opacity:.5;
+    animation:fly 8s ease-in-out infinite;
+  }
+  @keyframes fly {
+    0%,100% { transform:translate(0,0) rotate(-10deg); }
+    50% { transform:translate(-20px,-10px) rotate(5deg); }
+  }
+  .hero-wave { position:absolute; bottom:20px; left:5%; font-size:24px; opacity:.4; }
+
+  @media (max-width:640px) {
+    .day-cards { grid-template-columns:1fr; }
+    .budget { grid-template-columns:repeat(2,1fr); }
+    .spot-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="tape"></div>
+  <div class="hero-plane"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" style="width:32px;height:32px"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+  <div class="hero-wave"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" style="width:28px;height:28px"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg></div>
+  <h1>厦门三日游</h1>
+  <div class="from-to">瑞金 → 厦门 · 三天两晚</div>
+  <div class="sub">D6581 · 7:59 出发 · 10:55 到厦门站 · 住杏林湾</div>
+  <div class="tags">
+    <span>南普陀</span><span>厦门大学</span><span>鼓浪屿</span><span>白城日落</span><span>八市小吃</span>
+  </div>
+</div>
+
+<div class="nav">
+  <button data-view="overview" class="active">总览地图</button>
+  <button data-view="day1">Day 1</button>
+  <button data-view="day2">Day 2</button>
+  <button data-view="day3">Day 3</button>
+  <button data-view="budget">记账本</button>
+  <button data-view="tips">攻略</button>
+</div>
+
+<div class="wrap">
+
+  <!-- 总览 -->
+  <div class="view active" id="view-overview">
+    <div class="v-title">路线总览图</div>
+    <div class="v-desc">以真实厦门地理轮廓为底，蓝/橙/绿三条线分别是三天路线。</div>
+    <div class="polaroid">
+      <img src="assets/overview.jpg" alt="厦门三日游路线总览">
+      <div class="cap">—— 厦门三日游手账路线图 ——</div>
+    </div>
+
+    <div class="polaroid">
+      <img src="assets/metro-official.jpg" alt="厦门地铁官方线网图">
+      <div class="cap">—— 厦门地铁官方线网图（2026最新版，可放大看站点）——</div>
+    </div>
+
+    <div class="day-cards">
+      <div class="dc" onclick="go('day1')">
+        <div class="stamp">DAY1</div>
+        <h3>南普陀·厦大·白城</h3>
+        <p>D6581 到厦门站，放行李后进岛，祈福逛校园，海边看日落。</p>
+        <div class="go">翻页 →</div>
+      </div>
+      <div class="dc" onclick="go('day2')">
+        <div class="stamp">DAY2</div>
+        <h3>鼓浪屿慢游</h3>
+        <p>轮渡上岛，最美转角、日光岩、菽庄花园、港仔后沙滩。</p>
+        <div class="go">翻页 →</div>
+      </div>
+      <div class="dc" onclick="go('day3')">
+        <div class="stamp">DAY3</div>
+        <h3>园博苑·八市·返程</h3>
+        <p>酒店对面园博苑，八市沙坡尾逛吃，厦门北返程。</p>
+        <div class="go">翻页 →</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <h3>出行前打勾</h3>
+      <div class="ci" onclick="this.querySelector('input').click()"><input type="checkbox"><span>身份证（厦大刷脸入校）</span></div>
+      <div class="ci" onclick="this.querySelector('input').click()"><input type="checkbox"><span>鼓浪屿船票（厦门轮渡+，提前2天）</span></div>
+      <div class="ci" onclick="this.querySelector('input').click()"><input type="checkbox"><span>厦大预约（U厦大公众号，提前1-3天）</span></div>
+      <div class="ci" onclick="this.querySelector('input').click()"><input type="checkbox"><span>防晒、帽子、舒适步行鞋</span></div>
+      <div class="ci" onclick="this.querySelector('input').click()"><input type="checkbox"><span>返程票（厦门北→瑞金）</span></div>
+    </div>
+  </div>
+
+  <!-- Day 1 -->
+  <div class="view" id="view-day1">
+    <div class="v-title">第一天 · 初见厦门</div>
+    <div class="v-desc">D6581 7:59 瑞金发车，10:55 到厦门站。南普陀、厦大、白城三个点连一线。</div>
+    <div class="polaroid">
+      <img src="assets/day1.jpg" alt="Day1路线">
+      <div class="cap">—— 厦门站 → 民宿 → 南普陀 → 厦大 → 白城 ——</div>
+    </div>
+    <div class="polaroid" style="padding:14px;">
+      <div style="font-family:'Ma Shan Zheng',cursive;font-size:20px;margin-bottom:10px;color:var(--blue);">今日地铁段</div>
+      <svg viewBox="0 0 600 120" style="width:100%;height:auto;">
+        <line x1="80" y1="60" x2="520" y2="60" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="80" cy="60" r="9" fill="#d97742" stroke="#fff" stroke-width="3"/>
+        <text x="80" y="95" font-size="14" text-anchor="middle" fill="#c25b4e" font-weight="bold" font-family="Noto Sans SC">园博苑（民宿）</text>
+        <circle cx="520" cy="60" r="9" fill="#fff" stroke="#3b82f6" stroke-width="3"/>
+        <text x="520" y="95" font-size="14" text-anchor="middle" fill="#3d3225" font-family="Noto Sans SC">中山公园（南普陀）</text>
+        <text x="300" y="50" font-size="13" text-anchor="middle" fill="#8a7a5e" font-family="Noto Sans SC">1号线 · 约25分钟</text>
+      </svg>
+      <div class="cap" style="font-size:15px;">民宿出门坐1号线直达，不用换乘</div>
+    </div>
+    <div class="timeline">
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">07:59</div><div class="spot-name">瑞金站出发 D6581</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>车次</b>D6581</div>
+            <div><b>到达</b>10:55 厦门站</div>
+            <div><b>时长</b>约 2 小时 56 分</div>
+            <div><b>票价</b>二等座约 110 元</div>
+          </div>
+          <div class="note-box note-tip">到厦门站（岛内），不是厦门北站。车上补个觉。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">11:30</div><div class="spot-name">到杏林湾民宿放行李</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>交通</b>厦门站打车到民宿约25分钟，约25元</div>
+            <div><b>位置</b>万科里对面，园博苑站旁</div>
+          </div>
+          <div class="note-box note-tip">带行李直接打车，不用拖着箱子换乘。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">12:30</div><div class="spot-name">中山路午餐</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>地铁</b>园博苑站坐1号线（镇海路方向）→中山公园站，步行10分钟到中山路</div>
+          </div>
+          <div class="note-box note-food">1980烧肉粽、月华沙茶面、黄则和花生汤。</div>
+        </div></div>
+      </div>
+      <div class="spot hl" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">14:00</div><div class="spot-name">南普陀寺</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>门票</b>免费</div>
+            <div><b>时间</b>08:00-17:00</div>
+            <div><b>时长</b>1.5 小时</div>
+          </div>
+          <div class="note-box note-tip">进门免费领香。后山五老峰拍双子塔全景。出口素饼必买。</div>
+        </div></div>
+      </div>
+      <div class="spot hl" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">15:30</div><div class="spot-name">厦门大学</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>门票</b>免费需预约</div>
+            <div><b>预约</b>U厦大公众号提前1-3天</div>
+            <div><b>入口</b>南普陀步行到南门</div>
+          </div>
+          <div class="note-box note-tip">芙蓉隧道、上弦场、芙蓉湖。白城校门出就是沙滩。带身份证。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">17:30</div><div class="spot-name">白城沙滩日落</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>门票</b>免费</div>
+            <div><b>日落</b>约 18:00-18:30</div>
+          </div>
+          <div class="note-box note-tip">沿木栈道走到演武大桥观景平台视野更好。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">19:00</div><div class="spot-name">回民宿休息</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>交通</b>白城沙滩打车回民宿约30分钟，约35元</div>
+          </div>
+          <div class="note-box note-tip">晚上看完日落直接打车，不用拎着东西换乘。楼下万科里吃晚饭。</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="view" id="view-day2">
+    <div class="v-title">第二天 · 鼓浪屿</div>
+    <div class="v-desc">提前2天买船票。岛上街巷沙滩免费逛，景点门票自愿买。全程步行，穿最舒服的鞋。</div>
+    <div class="polaroid">
+      <img src="assets/day2.jpg" alt="鼓浪屿">
+      <div class="cap">—— 三丘田 → 最美转角 → 日光岩 → 菽庄花园 ——</div>
+    </div>
+    <div class="polaroid" style="padding:14px;">
+      <div style="font-family:'Ma Shan Zheng',cursive;font-size:20px;margin-bottom:10px;color:var(--blue);">今日地铁段（回程）</div>
+      <svg viewBox="0 0 600 160" style="width:100%;height:auto;">
+        <!-- 2号线绿色横 -->
+        <line x1="60" y1="50" x2="300" y2="50" stroke="#6a9a6b" stroke-width="6" stroke-linecap="round"/>
+        <!-- 1号线蓝色竖 -->
+        <line x1="300" y1="50" x2="300" y2="130" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+        <line x1="300" y1="130" x2="540" y2="130" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="60" cy="50" r="8" fill="#fff" stroke="#6a9a6b" stroke-width="3"/>
+        <text x="60" y="35" font-size="13" text-anchor="middle" fill="#3d3225" font-family="Noto Sans SC">邮轮中心（码头）</text>
+        <circle cx="300" cy="50" r="11" fill="#fff" stroke="#3b82f6" stroke-width="3"/>
+        <circle cx="300" cy="50" r="5" fill="#3b82f6"/>
+        <text x="300" y="35" font-size="13" text-anchor="middle" fill="#3d3225" font-weight="bold" font-family="Noto Sans SC">吕厝（换乘）</text>
+        <circle cx="420" cy="130" r="9" fill="#d97742" stroke="#fff" stroke-width="3"/>
+        <text x="420" y="155" font-size="13" text-anchor="middle" fill="#c25b4e" font-weight="bold" font-family="Noto Sans SC">园博苑（民宿）</text>
+        <circle cx="540" cy="130" r="7" fill="#fff" stroke="#3b82f6" stroke-width="3"/>
+        <text x="540" y="155" font-size="12" text-anchor="middle" fill="#3d3225" font-family="Noto Sans SC">集美学村（宵夜）</text>
+      </svg>
+      <div class="cap" style="font-size:15px;">码头坐2号线到吕厝，换1号线回民宿；晚上1站到集美学村</div>
+    </div>
+    <div class="timeline">
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">07:30</div><div class="spot-name">出发去厦鼓码头</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>交通</b>打车到邮轮中心码头约25分钟，约30元</div>
+            <div><b>船票</b>35元往返</div>
+          </div>
+          <div class="note-box note-tip">"厦门轮渡+"提前2天买，别信黄牛。早班船人少，打车赶船稳妥。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">09:00</div><div class="spot-name">最美转角 · 船屋</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="note-box note-tip">早上人少好拍照，笔山洞涂鸦墙。</div>
+        </div></div>
+      </div>
+      <div class="spot hl" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">10:30</div><div class="spot-name">日光岩</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>门票</b>50元（自愿进）</div>
+            <div><b>联票</b>90元含5景点更划算</div>
+            <div><b>时长</b>1小时</div>
+          </div>
+          <div class="note-box note-tip">鼓浪屿最高点，俯瞰全岛。不想花钱就在下面拍拍，不进去也不亏。楼梯陡慢走。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">12:30</div><div class="spot-name">龙头路午餐</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="note-box note-food">叶氏麻糍、林氏鱼丸、海蛎煎。</div>
+          <div class="note-box note-tip">花茶强卖、珍珠开蚌直接略过。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">14:00</div><div class="spot-name">菽庄花园 · 钢琴博物馆</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>门票</b>30元（自愿进）</div>
+            <div><b>联票</b>90元含5景点</div>
+            <div><b>时长</b>1.5小时</div>
+          </div>
+          <div class="note-box note-tip">借山藏海，整点有钢琴演奏。不感兴趣可跳过，在外面海边走走也舒服。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">16:00</div><div class="spot-name">港仔后沙滩 · 返程</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>回程</b>三丘田坐船回邮轮中心，地铁2号线吕厝换1号线回园博苑放东西</div>
+          </div>
+          <div class="note-box note-tip">踩水休息准备返程。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">19:30</div><div class="spot-name">集美学村石鼓路宵夜</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>地铁</b>园博苑站坐1号线往北1站→集美学村站</div>
+          </div>
+          <div class="note-box note-food">离民宿近，学生街美食，龙舟池夜景。</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="view" id="view-day3">
+    <div class="v-title">第三天 · 慢逛返程</div>
+    <div class="v-desc">早上酒店对面园博苑，下午八市沙坡尾，从厦门北回家。</div>
+    <div class="polaroid">
+      <img src="assets/day3.jpg" alt="Day3路线">
+      <div class="cap">—— 园博苑 → 八市 → 沙坡尾 → 厦门北站 ——</div>
+    </div>
+    <div class="polaroid" style="padding:14px;">
+      <div style="font-family:'Ma Shan Zheng',cursive;font-size:20px;margin-bottom:10px;color:var(--blue);">今日地铁段</div>
+      <svg viewBox="0 0 600 180" style="width:100%;height:auto;">
+        <line x1="80" y1="40" x2="520" y2="40" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="80" cy="40" r="8" fill="#fff" stroke="#3b82f6" stroke-width="3"/>
+        <text x="80" y="28" font-size="13" text-anchor="middle" fill="#3d3225" font-family="Noto Sans SC">中山公园（八市）</text>
+        <circle cx="300" cy="40" r="9" fill="#d97742" stroke="#fff" stroke-width="3"/>
+        <text x="300" y="75" font-size="13" text-anchor="middle" fill="#c25b4e" font-weight="bold" font-family="Noto Sans SC">园博苑（民宿）</text>
+        <circle cx="520" cy="40" r="8" fill="#fff" stroke="#3b82f6" stroke-width="3"/>
+        <text x="520" y="28" font-size="13" text-anchor="middle" fill="#3d3225" font-family="Noto Sans SC">厦门北站（返程）</text>
+        <text x="300" y="120" font-size="13" text-anchor="middle" fill="#8a7a5e" font-family="Noto Sans SC">1号线 · 八市↔民宿约25分钟 · 民宿→北站约15分钟</text>
+        <text x="300" y="145" font-size="12" text-anchor="middle" fill="#8a7a5e" font-family="Noto Sans SC">沙坡尾回民宿打车（约35分钟）</text>
+      </svg>
+      <div class="cap" style="font-size:15px;">八市和返程都在1号线上，不用换乘</div>
+    </div>
+    <div class="timeline">
+      <div class="spot hl" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">08:00</div><div class="spot-name">园博苑</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>门票</b>免费</div>
+            <div><b>位置</b>民宿对面步行即到</div>
+          </div>
+          <div class="note-box note-tip">花海、杏林阁、月光环，逛1.5小时。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">10:00</div><div class="spot-name">退房 · 行李寄存</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="note-box note-tip">行李寄民宿，下午回来取。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">10:30</div><div class="spot-name">八市</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>地铁</b>园博苑站坐1号线（镇海路方向）→中山公园站，步行8分钟到八市</div>
+          </div>
+          <div class="note-box note-food">阿杰五香、朱记手撕鸡、局口拌面。买馅饼肉松。</div>
+          <div class="note-box note-tip">海鲜加工先问价。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">14:00</div><div class="spot-name">沙坡尾艺术西区</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>交通</b>八市打车到沙坡尾约10分钟，约12元</div>
+          </div>
+          <div class="note-box note-tip">避风坞拍双子塔，咖啡馆小坐。</div>
+        </div></div>
+      </div>
+      <div class="spot" onclick="this.classList.toggle('open')">
+        <div class="spot-head"><div class="spot-time">17:00</div><div class="spot-name">取行李 → 厦门北站</div><div class="spot-arrow">▼</div></div>
+        <div class="spot-body"><div class="spot-inner">
+          <div class="spot-grid">
+            <div><b>回民宿</b>沙坡尾打车回园博苑取行李约35分钟，约40元</div>
+            <div><b>去北站</b>园博苑站坐1号线（岩内方向）直达厦门北站，约15分钟</div>
+            <div><b>预留</b>至少1小时</div>
+            <div><b>返程</b>建议18:00后车票</div>
+          </div>
+          <div class="note-box note-tip">沙坡尾回民宿取行李约35分钟，别赶。</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 攻略 -->
+  <div class="view" id="view-tips">
+    <div class="v-title">旅行小抄</div>
+    <div class="v-desc">预算、交通、避坑。</div>
+    <h3 style="font-family:'Ma Shan Zheng',cursive;font-size:22px;margin:16px 0 10px;">人均预算</h3>
+    <div class="budget">
+      <div class="b"><div class="num">~220</div><div class="lbl">往返动车</div></div>
+      <div class="b"><div class="num">0</div><div class="lbl">住宿（已订）</div></div>
+      <div class="b"><div class="num">~120</div><div class="lbl">门票</div></div>
+      <div class="b"><div class="num">~400</div><div class="lbl">吃吃喝喝</div></div>
+    </div>
+    <h3 style="font-family:'Ma Shan Zheng',cursive;font-size:24px;margin:24px 0 10px;">交通</h3>
+    <div class="checklist">
+      <div class="ci" style="cursor:default"><span>厦门站到民宿带行李直接打车，约25元</span></div>
+      <div class="ci" style="cursor:default"><span>支付宝搜"厦门地铁"领乘车码</span></div>
+      <div class="ci" style="cursor:default"><span>民宿到南普陀/八市：1号线园博苑→中山公园</span></div>
+      <div class="ci" style="cursor:default"><span>赶船、晚上看完日落、八市到沙坡尾近：打车</span></div>
+      <div class="ci" style="cursor:default"><span>返程：1号线园博苑直达厦门北站约15分钟</span></div>
+    </div>
+    <h3 style="font-family:'Ma Shan Zheng',cursive;font-size:22px;margin:24px 0 10px;">避坑</h3>
+    <div class="checklist">
+      <div class="ci" style="cursor:default"><span>鼓浪屿别买高价珍珠、花茶强卖</span></div>
+      <div class="ci" style="cursor:default"><span>码头黄牛说没票别信</span></div>
+      <div class="ci" style="cursor:default"><span>八市海鲜加工先问价</span></div>
+      <div class="ci" style="cursor:default"><span>厦大必须提前预约刷身份证</span></div>
+      <div class="ci" style="cursor:default"><span>防晒！海边紫外线强</span></div>
+    </div>
+  </div>
+
+  <!-- 记账本 -->
+  <div class="view" id="view-budget">
+    <div class="v-title">四人记账本</div>
+    <div class="v-desc">记下每笔开销，自动算AA。数据存在浏览器里，刷新不丢。</div>
+    <div class="bk-form">
+      <h3>记一笔</h3>
+      <div class="bk-row">
+        <input type="number" id="bk-amt" placeholder="金额（元）" step="0.01">
+        <select id="bk-cat">
+          <option value="餐饮">餐饮</option><option value="交通">交通</option>
+          <option value="门票">门票</option><option value="住宿">住宿</option>
+          <option value="购物">购物</option><option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="bk-row"><input type="text" id="bk-desc" class="bk-full" placeholder="备注（如：八市海鲜、鼓浪屿船票）"></div>
+      <button class="bk-add-btn" onclick="addExpense()">＋ 记一笔</button>
+    </div>
+    <div class="bk-summary">
+      <div class="bk-sum-card"><div class="n" id="sum-total">0</div><div class="l">总花费（元）</div></div>
+      <div class="bk-sum-card"><div class="n" id="sum-count">0</div><div class="l">笔数</div></div>
+      <div class="bk-sum-card"><div class="n" id="sum-cat-food">0</div><div class="l">餐饮</div></div>
+      <div class="bk-sum-card"><div class="n" id="sum-cat-other">0</div><div class="l">其他</div></div>
+    </div>
+    <div class="bk-list" id="bk-list"><div class="empty-tip">还没有记录，上面记第一笔吧</div></div>
+  </div>
+
+</div>
+
+<!-- 漂浮手帐贴纸装饰 -->
+<div class="deco deco1"><svg viewBox="0 0 100 100" fill="none" stroke="#d97742" stroke-width="2.5" stroke-linecap="round"><path d="M20,60 Q35,40 50,55 T80,50" fill="none"/><path d="M75,45 L82,50 L75,55" fill="#d97742"/></svg></div>
+<div class="deco deco2"><svg viewBox="0 0 100 100" fill="none" stroke="#3b82f6" stroke-width="2.5"><circle cx="50" cy="45" r="22"/><circle cx="50" cy="45" r="8"/><path d="M30,45 L15,38 M30,52 L15,60 M70,45 L85,38 M70,52 L85,60 M42,28 L38,18 M58,28 L62,18"/></svg></div>
+<div class="deco deco3"><svg viewBox="0 0 100 100" fill="none" stroke="#6a9a6b" stroke-width="2.5" stroke-linejoin="round"><path d="M30,75 Q50,30 70,75 Z"/><line x1="50" y1="75" x2="50" y2="90"/><path d="M50,55 Q40,45 35,35 M50,55 Q60,45 65,35 M50,55 Q50,40 50,28"/></svg></div>
+<div class="deco deco4"><svg viewBox="0 0 100 100" fill="none" stroke="#c25b4e" stroke-width="2.5"><ellipse cx="50" cy="55" rx="30" ry="18"/><circle cx="40" cy="52" r="5" fill="#c25b4e"/><path d="M25,40 Q30,25 50,25 Q70,25 75,40" /></svg></div>
+<div class="deco deco5"><svg viewBox="0 0 100 100" fill="none" stroke="#e0a82e" stroke-width="2.5"><rect x="20" y="30" width="60" height="45" rx="4"/><path d="M35,30 L40,20 L60,20 L65,30" /><line x1="30" y1="45" x2="70" y2="45"/><line x1="30" y1="55" x2="60" y2="55"/></svg></div>
+<div class="deco deco6"><svg viewBox="0 0 100 100" fill="none" stroke="#8a7a5e" stroke-width="2.5"><path d="M20,70 Q35,55 50,70 T80,65" /><path d="M25,55 Q40,40 55,55 T80,50" opacity=".5"/></svg></div>
+
+<button id="toTop">↑</button>
+<footer>—— 厦门三日游 · 旅行手帐 ——<br>地图为真实位置标注，实际以现场导航为准</footer>
+
+<script>
+  function go(v) {
+    document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.view===v));
+    document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id==='view-'+v));
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
+  document.querySelectorAll('.ci input').forEach(cb => cb.addEventListener('change', () => cb.parentElement.classList.toggle('done', cb.checked)));
+  window.addEventListener('scroll', () => {
+    document.getElementById('toTop').style.display = window.scrollY > 400 ? 'block' : 'none';
+  });
+
+  // ===== 记账本 =====
+  const CAT_COLORS = {'餐饮':'#d97742','交通':'#3b82f6','门票':'#6a9a6b','住宿':'#8b5cf6','购物':'#e0a82e','其他':'#8a7a5e'};
+  let expenses = JSON.parse(localStorage.getItem('xm_expenses') || '[]');
+
+  function saveExp() { localStorage.setItem('xm_expenses', JSON.stringify(expenses)); }
+
+  function addExpense() {
+    const amt = parseFloat(document.getElementById('bk-amt').value);
+    if (!amt || amt <= 0) { alert('请输入金额'); return; }
+    expenses.push({
+      amt: amt,
+      cat: document.getElementById('bk-cat').value,
+      desc: document.getElementById('bk-desc').value || '未备注',
+      time: new Date().toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})
+    });
+    saveExp();
+    document.getElementById('bk-amt').value = '';
+    document.getElementById('bk-desc').value = '';
+    renderExp();
+  }
+
+  function delExp(i) {
+    expenses.splice(i,1);
+    saveExp();
+    renderExp();
+  }
+
+  function renderExp() {
+    const list = document.getElementById('bk-list');
+    const total = expenses.reduce((s,e)=>s+e.amt,0);
+    const food = expenses.filter(e=>e.cat==='餐饮').reduce((s,e)=>s+e.amt,0);
+    const other = total - food;
+    document.getElementById('sum-total').textContent = total.toFixed(1);
+    document.getElementById('sum-count').textContent = expenses.length;
+    document.getElementById('sum-cat-food').textContent = food.toFixed(1);
+    document.getElementById('sum-cat-other').textContent = other.toFixed(1);
+
+    if (expenses.length === 0) {
+      list.innerHTML = '<div class="empty-tip">还没有记录，上面记第一笔吧</div>';
+      return;
+    }
+    list.innerHTML = expenses.map((e,i) => `
+      <div class="bk-item">
+        <span class="bk-cat" style="background:${CAT_COLORS[e.cat]||'#888'}">${e.cat}</span>
+        <div class="bk-desc">${e.desc}<div class="bk-payer">${e.time}</div></div>
+        <div class="bk-amt">¥${e.amt.toFixed(1)}</div>
+        <button class="bk-del" onclick="delExp(${i})">×</button>
+      </div>
+    `).join('');
+  }
+  renderExp();
+</script>
+
+</body>
+</html>
